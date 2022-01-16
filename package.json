@@ -1,0 +1,24 @@
+{
+  "name": "secret-santa",
+  "version": "1.0.0",
+  "description": "secret-santa game",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "js",
+    "game"
+  ],
+  "author": "Sova Denys",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.2",
+    "sequelize": "^6.13.0",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

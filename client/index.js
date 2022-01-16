@@ -1,0 +1,150 @@
+window.onload = async function () {
+    let loaded = sessionStorage.getItem('loaded');
+    if (loaded) {
+        await request("/api/restart");
+    } else {
+        sessionStorage.setItem('loaded', true);
+    }
+}
+
+$(document).on('submit', 'form', function (e) {
+    e.preventDefault();
+});
+
+/*Dropdown Menu*/
+$('.dropdown').click(function () {
+    $(this).attr('tabindex', 1).focus();
+    $(this).toggleClass('active');
+    $(this).find('.dropdown-menu').slideToggle(300);
+});
+$('.dropdown').focusout(function () {
+    $(this).removeClass('active');
+    $(this).find('.dropdown-menu').slideUp(300);
+});
+/*End Dropdown Menu*/
+
+$('textarea').on('keypress', function (event) {
+    let text = $('textarea').val();
+    let lines = text.split("\n");
+    let currentLine = this.value.substr(0, this.selectionStart).split("\n").length;
+    if (event.keyCode == 13) {
+        if (lines.length >= $(this).attr('rows')) {
+            return false;
+        }
+    }
+    else {
+        if (lines[currentLine - 1].length >= $(this).attr('cols')) {
+            return false;
+        }
+    }
+});
+
+$('input[type=submit]').on('click', async (event) => {
+    let regExp = /^[а-яА-ЯёЁіІїЇєЄa-zA-Z]+$/;
+    if (!regExp.test($('#form_name').val())) {
+        alert("Wrong data");
+    } else {
+        let user = {
+            name: $('#form_name').val().replace(/\s+/g, ''),
+            surname: $('#form_lastname').val().replace(/\s+/g, ''),
+            wish: $('#form_message').val()
+        }
+
+        await request('/api/adduser', 'POST', user);
+
+        $('#form_name').val("")
+        $('#form_lastname').val("")
+        $('#form_message').val("")
+    }
+    return false;
+});
+
+$('button[type=button]').on('click', async (event) => {
+    let response = await request('/api/getuser');
+    let arrUsers = await response.json();
+    if(arrUsers.length <= 3) {
+        alert("You need more members")
+        return false;
+    } else if(arrUsers.length >= 500) {
+        alert("There are too many members, please roload the page to start again")
+        return false;
+    }
+    let santa_pairs = {
+        santaData: {},
+        receiverData: {}
+    };
+    let receiversId = [];
+    let size = arrUsers.length;
+    arrUsers.forEach(async (element) => {
+        $('.dropdown-menu').append(`<li id="users">${element.name} ${element.surname}</li>`);
+        santa_pairs = {
+            santaData: {},
+            receiverData: {}
+        };
+        santa_pairs.santaData.santa_name = element.name.replace(/\s+/g, '');
+        santa_pairs.santaData.santa_surname = element.surname.replace(/\s+/g, '');
+        santa_pairs.santaData.santa_id = element.id;
+
+        while (!santa_pairs.receiverData.receiver_name) {
+            if (arrUsers.length == 1) {
+                santa_pairs.receiverData.receiver_name = arrUsers[0].name.replace(/\s+/g, '');
+                santa_pairs.receiverData.receiver_surname = arrUsers[0].surname.replace(/\s+/g, '');
+                santa_pairs.receiverData.receiver_wish = arrUsers[0].wish;
+                break;
+            }
+            for (let i = 0; i < arrUsers.length; i++) {
+                integer = random(1, size);
+                if (arrUsers[i].id == element.id) {
+                    continue;
+                }
+                if (arrUsers[i].id == integer && !receiversId.includes(arrUsers[i].id)) {
+                    santa_pairs.receiverData.receiver_name = arrUsers[i].name.replace(/\s+/g, '');
+                    santa_pairs.receiverData.receiver_surname = arrUsers[i].surname.replace(/\s+/g, '');
+                    santa_pairs.receiverData.receiver_wish = arrUsers[i].wish;
+                    arrUsers = arrUsers.filter(e => e != arrUsers[i]);
+                    break;
+                }
+            };
+        }
+
+        await request('/api/setpairs', 'POST', santa_pairs);
+    });
+    $('.container_drop').css("display", "");
+    $('.dropdown .dropdown-menu li').click(async function () {
+        if ($(".receiverData")) {
+            $(".receiverData").remove();
+        }
+        $(this).parents('.dropdown').find('span').text($(this).text());
+        let santaData = {};
+        let text = $(this).text();
+        santaData.nameSanta = text.slice(0, text.indexOf(" "));
+        santaData.surnameSanta = text.slice(text.indexOf(" ") + 1);
+        const receiverData = await request('/api/getreceiver', 'POST', santaData);
+        let data = await receiverData.json();
+        $(".msg").append(`<p class="receiverData">Your receiver : ${data.name} ${data.surname}</p><p class="receiverData">His wish : ${data.wish.replace(/\s+/g, ',')}`);
+    });
+    return false;
+});
+
+const request = async (url, method = 'GET', data = null) => {
+    let body;
+    if (data) {
+        body = JSON.stringify(data)
+    }
+
+    let response = await fetch(url, {
+        method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body
+    });
+    return response;
+}
+
+function random(min, max) {
+    let rand = Math.random();
+    let rand1 = (rand * (max - min + 1)) + min;
+    let rand2 = Math.floor(rand1);
+    return rand2;
+}
