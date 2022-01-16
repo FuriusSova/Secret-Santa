@@ -40,6 +40,9 @@ $('textarea').on('keypress', function (event) {
 });
 
 $('input[type=submit]').on('click', async (event) => {
+    if($('button[type=button]').css("display") == "none"){
+        $('button[type=button]').show();
+    }
     let regExp = /^[а-яА-ЯёЁіІїЇєЄa-zA-Z]+$/;
     if (!regExp.test($('#form_name').val())) {
         alert("Wrong data");
