@@ -43,8 +43,11 @@ $('input[type=submit]').on('click', async (event) => {
     if($('button[type=button]').css("display") == "none"){
         $('button[type=button]').show();
     }
+    if($(".container_drop").css("display") != "none"){
+        location.reload();
+    }
     let regExp = /^[а-яА-ЯёЁіІїЇєЄa-zA-Z]+$/;
-    if (!regExp.test($('#form_name').val())) {
+    if (!regExp.test($('#form_name').val()) || !regExp.test($('#form_lastname').val()) || $('#form_message').val() == "") {
         alert("Wrong data");
     } else {
         let user = {
@@ -64,6 +67,7 @@ $('input[type=submit]').on('click', async (event) => {
 
 $('button[type=button]').on('click', async (event) => {
     $('button[type=button]').hide(2000);
+    $('input[type=submit]').hide(2000);
     let response = await request('/api/getuser');
     let arrUsers = await response.json();
     if(arrUsers.length <= 3) {
