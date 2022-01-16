@@ -60,6 +60,7 @@ $('input[type=submit]').on('click', async (event) => {
 });
 
 $('button[type=button]').on('click', async (event) => {
+    $('button[type=button]').hide(2000);
     let response = await request('/api/getuser');
     let arrUsers = await response.json();
     if(arrUsers.length <= 3) {
@@ -73,7 +74,6 @@ $('button[type=button]').on('click', async (event) => {
         santaData: {},
         receiverData: {}
     };
-    let receiversId = [];
     let size = arrUsers.length;
     arrUsers.forEach(async (element) => {
         $('.dropdown-menu').append(`<li id="users">${element.name} ${element.surname}</li>`);
@@ -86,22 +86,15 @@ $('button[type=button]').on('click', async (event) => {
         santa_pairs.santaData.santa_id = element.id;
 
         while (!santa_pairs.receiverData.receiver_name) {
-            if (arrUsers.length == 1) {
-                santa_pairs.receiverData.receiver_name = arrUsers[0].name.replace(/\s+/g, '');
-                santa_pairs.receiverData.receiver_surname = arrUsers[0].surname.replace(/\s+/g, '');
-                santa_pairs.receiverData.receiver_wish = arrUsers[0].wish;
-                break;
-            }
             for (let i = 0; i < arrUsers.length; i++) {
                 integer = random(1, size);
                 if (arrUsers[i].id == element.id) {
                     continue;
                 }
-                if (arrUsers[i].id == integer && !receiversId.includes(arrUsers[i].id)) {
+                if (arrUsers[i].id == integer) {
                     santa_pairs.receiverData.receiver_name = arrUsers[i].name.replace(/\s+/g, '');
                     santa_pairs.receiverData.receiver_surname = arrUsers[i].surname.replace(/\s+/g, '');
                     santa_pairs.receiverData.receiver_wish = arrUsers[i].wish;
-                    arrUsers = arrUsers.filter(e => e != arrUsers[i]);
                     break;
                 }
             };
