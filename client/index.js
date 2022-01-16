@@ -1,10 +1,5 @@
 window.onload = async function () {
-    let loaded = sessionStorage.getItem('loaded');
-    if (loaded) {
-        await request("/api/restart");
-    } else {
-        sessionStorage.setItem('loaded', true);
-    }
+    await request("/api/restart");
 }
 
 $(document).on('submit', 'form', function (e) {
