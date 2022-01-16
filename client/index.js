@@ -61,8 +61,6 @@ $('input[type=submit]').on('click', async (event) => {
 });
 
 $('button[type=button]').on('click', async (event) => {
-    $('button[type=button]').hide(2000);
-    $('input[type=submit]').hide(2000);
     let response = await request('/api/getuser');
     let arrUsers = await response.json();
     if(arrUsers.length <= 3) {
@@ -72,6 +70,8 @@ $('button[type=button]').on('click', async (event) => {
         alert("There are too many members, please roload the page to start again")
         return false;
     }
+    $('button[type=button]').hide(2000);
+    $('input[type=submit]').hide(2000);
     let santa_pairs = {
         santaData: {},
         receiverData: {}
