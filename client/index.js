@@ -1,5 +1,28 @@
 window.onload = async function () {
-    await request("/api/restart");
+    let response = await request('/api/getuser');
+    let arrUsers = await response.json();
+    if (arrUsers.length != 0) {
+        $('#createPairs').hide();
+        $('input[type=submit]').hide();
+        $('#restartGame').css("display", "");
+        arrUsers.forEach(async (element) => {
+            $('.dropdown-menu').append(`<li id="users">${element.name} ${element.surname}</li>`);
+        });
+        $('.container_drop').css("display", "");
+        $('.dropdown .dropdown-menu li').click(async function () {
+            if ($(".receiverData")) {
+                $(".receiverData").remove();
+            }
+            $(this).parents('.dropdown').find('span').text($(this).text());
+            let santaData = {};
+            let text = $(this).text();
+            santaData.nameSanta = text.slice(0, text.indexOf(" "));
+            santaData.surnameSanta = text.slice(text.indexOf(" ") + 1);
+            const receiverData = await request('/api/getreceiver', 'POST', santaData);
+            let data = await receiverData.json();
+            $(".msg").append(`<p class="receiverData">Your receiver : ${data.name} ${data.surname}</p><p class="receiverData">His wish : ${data.wish.replace(/\s+/g, ',')}`);
+        });
+    }
 }
 
 $(document).on('submit', 'form', function (e) {
@@ -35,10 +58,10 @@ $('textarea').on('keypress', function (event) {
 });
 
 $('input[type=submit]').on('click', async (event) => {
-    if($('button[type=button]').css("display") == "none"){
-        $('button[type=button]').show();
+    if ($('#createPairs').css("display") == "none") {
+        $('#createPairs').show();
     }
-    if($(".container_drop").css("display") != "none"){
+    if ($(".container_drop").css("display") != "none") {
         location.reload();
     }
     let regExp = /^[а-яА-ЯёЁіІїЇєЄa-zA-Z]+$/;
@@ -60,18 +83,19 @@ $('input[type=submit]').on('click', async (event) => {
     return false;
 });
 
-$('button[type=button]').on('click', async (event) => {
+$('#createPairs').on('click', async (event) => {
     let response = await request('/api/getuser');
     let arrUsers = await response.json();
-    if(arrUsers.length <= 3) {
+    if (arrUsers.length <= 3) {
         alert("You need more members")
         return false;
-    } else if(arrUsers.length >= 500) {
+    } else if (arrUsers.length >= 500) {
         alert("There are too many members, please roload the page to start again")
         return false;
     }
-    $('button[type=button]').hide(2000);
+    $('#createPairs').hide(2000);
     $('input[type=submit]').hide(2000);
+    $('#restartGame').css("display", "");
     let santa_pairs = {
         santaData: {},
         receiverData: {}
@@ -119,6 +143,11 @@ $('button[type=button]').on('click', async (event) => {
         $(".msg").append(`<p class="receiverData">Your receiver : ${data.name} ${data.surname}</p><p class="receiverData">His wish : ${data.wish.replace(/\s+/g, ',')}`);
     });
     return false;
+});
+
+$('#restartGame').on('click', async (event) => {
+    let res = await request('/api/restart');
+    location.reload();
 });
 
 const request = async (url, method = 'GET', data = null) => {

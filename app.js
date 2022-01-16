@@ -10,8 +10,9 @@ sequelize.sync({force:true}).then(() => console.log("Ready"));
 
 app.use(exp.json());
 
-app.get('/api/restart', (req, res) => {
-    sequelize.sync({force:true}).then(() => console.log("Database has been restarted"));
+app.get('/api/restart', async (req, res) => {
+    await sequelize.sync({force:true});
+    res.status(200).json({data : "Database has been updated"});
 })
 
 app.post('/api/getreceiver', async (req, res) => {
