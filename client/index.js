@@ -20,7 +20,7 @@ window.onload = async function () {
             santaData.surnameSanta = text.slice(text.indexOf(" ") + 1);
             const receiverData = await request('/api/getreceiver', 'POST', santaData);
             let data = await receiverData.json();
-            $(".msg").append(`<p class="receiverData">Your receiver : ${data.name} ${data.surname}</p><p class="receiverData">His wish : ${data.wish.replace(/\s+/g, ',')}`);
+            $(".msg").append(`<p class="receiverData">Your receiver : ${data.name} ${data.surname}</p><p class="receiverData">His wish : <br> ${data.wish.replace(/, /g, "<br>")}`);
         });
     }
 }
