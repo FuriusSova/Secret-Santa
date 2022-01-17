@@ -71,8 +71,10 @@ $('input[type=submit]').on('click', async (event) => {
         let user = {
             name: $('#form_name').val().replace(/\s+/g, ''),
             surname: $('#form_lastname').val().replace(/\s+/g, ''),
-            wish: $('#form_message').val()
+            wish: $('#form_message').val().replace(/\n+|\r+/g, ', ')
         }
+
+        //console.log($('#form_message').val().replace(/\n|\r/g, '--'));
 
         await request('/api/adduser', 'POST', user);
 
@@ -101,6 +103,7 @@ $('#createPairs').on('click', async (event) => {
         receiverData: {}
     };
     let size = arrUsers.length;
+    let usersId = [];
     arrUsers.forEach(async (element) => {
         $('.dropdown-menu').append(`<li id="users">${element.name} ${element.surname}</li>`);
         santa_pairs = {
@@ -117,12 +120,13 @@ $('#createPairs').on('click', async (event) => {
                 if (arrUsers[i].id == element.id) {
                     continue;
                 }
-                if (arrUsers[i].id == integer) {
+                if (arrUsers[i].id == integer && !usersId.includes(arrUsers[i].id)) {
                     santa_pairs.receiverData.receiver_name = arrUsers[i].name.replace(/\s+/g, '');
                     santa_pairs.receiverData.receiver_surname = arrUsers[i].surname.replace(/\s+/g, '');
                     santa_pairs.receiverData.receiver_wish = arrUsers[i].wish;
+                    usersId.push(arrUsers[i].id)
                     break;
-                }
+                };
             };
         }
 
@@ -140,7 +144,7 @@ $('#createPairs').on('click', async (event) => {
         santaData.surnameSanta = text.slice(text.indexOf(" ") + 1);
         const receiverData = await request('/api/getreceiver', 'POST', santaData);
         let data = await receiverData.json();
-        $(".msg").append(`<p class="receiverData">Your receiver : ${data.name} ${data.surname}</p><p class="receiverData">His wish : ${data.wish.replace(/\s+/g, ',')}`);
+        $(".msg").append(`<p class="receiverData">Your receiver : ${data.name} ${data.surname}</p><p class="receiverData">His wish : <br> ${data.wish.replace(/, /g, "<br>")}`);
     });
     return false;
 });
