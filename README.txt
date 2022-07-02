@@ -1,11 +1,11 @@
-Для запуску програми, Вам необхідно перейти по адресу: https://peaceful-badlands-62534.herokuapp.com/
+To launch the program, you need to go to the address: https://peaceful-badlands-62534.herokuapp.com/
 
-1) Введіть своє ім'я та прізвище у відповідні поля
-2) Введіть свої бажання (кожне бажання в окремому рядку, Ви можете ввести до 10 бажань)
-3) Зареєструйтесь за допомогою кнопки "Register"
-4) Коли поля знову стануть пустими, ви зможете зареєструвати когось іншого (мінімум 3 людини)
-5) Коли всі будуть зареєстровані, нажміть на кнопку "Create pairs"
-6) На екрані з'явиться список із зареєстрованими людьми, в якому Ви маєте вибрати своє ім'я
-7) Під списком ви побачите текст з інформацією про Вашого одержувача
+1) Enter your first and last name in the appropriate fields
+2) Enter your wishes (each wish in a separate line, you can enter up to 10 wishes)
+3) Register using the "Register" button
+4) When the fields become empty again, you can register someone else (minimum 3 people)
+5) When everyone is registered, click on the "Create pairs" button
+6) A list of registered people will appear on the screen, in which you should choose your name
+7) Below the list you will see a text with information about your recipient
 
-!Якщо ви хочете почати гру спочатку, натисніть на відповідну кнопку "Restart game"!
+!If you want to start the game from the beginning, click on the corresponding button "Restart game"!
