@@ -1,4 +1,4 @@
-To launch the program, you need to go to the address: https://peaceful-badlands-62534.herokuapp.com/
+How the program works:
 
 1) Enter your first and last name in the appropriate fields
 2) Enter your wishes (each wish in a separate line, you can enter up to 10 wishes)
